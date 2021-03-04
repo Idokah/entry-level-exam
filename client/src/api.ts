@@ -11,13 +11,18 @@ export type Ticket = {
 }
 
 export type ApiClient = {
-    getTickets: () => Promise<Ticket[]>;
+    getTickets: (search : string) => Promise<Ticket[]>;
 }
 
 export const createApiClient = (): ApiClient => {
     return {
-        getTickets: () => {
-            return axios.get(APIRootPath).then((res) => res.data);
+        getTickets: (search : string) => {
+            return axios.get(APIRootPath,
+                {
+                    params: {
+                        search: search
+                    }
+                }).then((res) => res.data);
         }
     }
 }

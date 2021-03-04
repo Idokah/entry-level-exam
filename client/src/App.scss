@@ -2,6 +2,7 @@
 	--text-color: black;
 	--title-color: #A7A633;
 	--background-color: #e1e195;
+	--content-color : #808080;
 }
 
 body {
@@ -70,7 +71,7 @@ body {
 
 		.ticket {
 			overflow: hidden;
-			height: 150px;
+			height: auto;
 			width: calc(50% - 70px);
 			margin: 15px;
 			display: inline-block;
@@ -89,8 +90,13 @@ body {
 				font-weight: 400;
 				font-style: normal;
 				color: var(--title-color);
+				//height: 45px;
 			}
 
+			.content {
+				color:var(--content-color);
+				height:auto;
+			}
 			footer {
 
 				display: flex;
