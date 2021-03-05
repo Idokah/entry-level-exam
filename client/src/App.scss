@@ -63,7 +63,9 @@ body {
 		font-weight: 500;
 		font-size: 12px;
 	}
-
+	.Pagination{
+		justify-content: center;
+	}
 	.tickets {
 
 		margin: 0;
@@ -96,6 +98,9 @@ body {
 			.content {
 				color:var(--content-color);
 				height:auto;
+			}
+			.pinned{
+				right:calc(50% - 70px) ;
 			}
 			footer {
 
