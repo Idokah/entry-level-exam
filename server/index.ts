@@ -20,27 +20,17 @@ app.use((_, res, next) => {
 });
 
 app.get(APIPath, (req, res) => {
-
   // @ts-ignore
   const page: number = req.query.page || 1;
   const search: string = req.query.search as string|| "";
-  const paginatedData = tempData.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-  
 
-  if (search!="") {
-  const filteredTickets = tempData//paginatedData
+  const filteredTickets = tempData  
   .filter((t) => (t.title.toLowerCase() + t.content.toLowerCase()).includes(search.toLowerCase()));
-  //
-  //const result=filteredTickets.slice(0,20);  //get top 20 results.
-  //
-
-  // res.send (filteredTickets);
-  res.send (filteredTickets);
-  }
-  else
-  {
-  res.send(paginatedData);
-  }
+  
+  const paginatedData = filteredTickets.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const numOfPages=Math.ceil(filteredTickets.length/PAGE_SIZE);
+  res.send({tickets : paginatedData,
+            numOfPages: numOfPages});
 });
 
 
