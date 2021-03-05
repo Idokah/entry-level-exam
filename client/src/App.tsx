@@ -35,7 +35,12 @@ export class App extends React.PureComponent<{}, AppState> {
 	}
 
 	handlePinItem(ticket: Ticket) {
-		this.state.pinTickets.add(ticket.id);
+		if (this.state.pinTickets.has(ticket.id)) {
+			this.state.pinTickets.delete(ticket.id);
+		}
+		else {
+			this.state.pinTickets.add(ticket.id);
+		}
 		if (this.state.tickets) {
 			this.setState({
 				tickets: this.state.tickets.sort((a, b) => {
@@ -50,27 +55,26 @@ export class App extends React.PureComponent<{}, AppState> {
 		this.forceUpdate();
 		console.log(this.state.pinTickets);
 	}
-
 	renderTickets = (tickets: Ticket[]) => {
-		console.log("renderTickets");
+		var pinText = '';
 		return (
-
 			<ul className='tickets'>
-				{tickets.map((ticket) => (<li key={ticket.id} className='ticket'>
-					<button className='pinned' onClick={this.handlePinItem.bind(this, ticket)}>pin</button>
+				{tickets.map((ticket) => (<li key={ticket.id} className='ticket' >
+					<div id='pinnedPosition' className='pinned'>
+						<button onClick={this.handlePinItem.bind(this, ticket)}>{this.state.pinTickets.has(ticket.id) ? 'unpin' : 'pin'}</button>
+					</div>
 					<h5 className='title'>{ticket.title}</h5>
 					<ShowMoreText
 						lines={3}
 						more='See more'
 						less='See less'
 						className='content'
-
 					>
 						{ticket.content}
 					</ShowMoreText>
 					<footer>
 						<div className='meta-data'>By {ticket.userEmail} | {new Date(ticket.creationTime).toLocaleString()}</div>
-
+						<label className='tag'>{}</label>
 					</footer>
 				</li>))}
 			</ul>);
