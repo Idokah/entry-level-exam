@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { APIRootPath } from '@fed-exam/config';
-//import { isMetaProperty } from 'typescript';
 
 export type Ticket = {
     id: string,
@@ -10,6 +9,7 @@ export type Ticket = {
     userEmail: string;
     labels?: string[];
 }
+
 export type GetTicketsResponse = {
     tickets: Ticket[],
     numOfPages: number;
@@ -32,7 +32,7 @@ export const createApiClient = (): ApiClient => {
                 }).then((res) => res.data);
         },
         addTicket: (ticket,page) =>{
-            return axios.post(APIRootPath+'/addTicket',
+            return axios.post(`${APIRootPath}/addTicket`,
             {
                 params:{
                     ticket:ticket

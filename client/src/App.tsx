@@ -1,12 +1,10 @@
 import React from 'react';
 import Pagination from '@material-ui/lab/Pagination';
-//import { makeStyles, createStyles } from '@material-ui/core/styles';
 // @ts-ignore
 import ShowMoreText from 'react-show-more-text';
 import './App.scss';
 import { createApiClient, Ticket } from './api';
 import { Container } from "./AddTicketForm/Container";
-import { Component } from 'react';
 
 export type AppState = {
 	tickets?: Ticket[],
@@ -33,16 +31,11 @@ export class App extends React.PureComponent<{}, AppState> {
 	}
 
 	handlePinItem(ticket: Ticket) {
-		const updatedTickets = this.state.pinTickets;
-		if (this.state.pinTickets.has(ticket.id)) {
+		const updatedTickets = new Set(this.state.pinTickets)
+		if (this.state.pinTickets.has(ticket.id)) 
 			updatedTickets.delete(ticket.id);
-			this.setState({ pinTickets: updatedTickets});
-		}
-		else {
-			updatedTickets.add(ticket.id);
-			this.setState({ pinTickets: updatedTickets});
-		}
-		this.forceUpdate();
+		else updatedTickets.add(ticket.id);
+		this.setState({ pinTickets: updatedTickets});
 	}
 
 	getOrderedTickets() {
@@ -59,7 +52,8 @@ export class App extends React.PureComponent<{}, AppState> {
 		const orderdTickets: Ticket[] = this.getOrderedTickets();
 		return (
 			<ul className='tickets'>
-				{ orderdTickets.map((ticket)=>{ return (
+				{ orderdTickets.map((ticket)=>{ 
+				return (
 				<li key={ticket.id} className='ticket' >
 				<div className='header'>
 					<h5 className='title'>{ticket.title}</h5>
@@ -80,7 +74,7 @@ export class App extends React.PureComponent<{}, AppState> {
 					<div className='tags'>
 					{ticket.labels ? 
 						(ticket.labels.map((label: String) => 
-						 <label key={label as string} className='tag'>{label}{' '}</label>) ) : null
+						 <label key={label as string} className='tag'>{label}</label>) ) : null
 					}
 					</div>
 				</footer>
@@ -122,7 +116,7 @@ export class App extends React.PureComponent<{}, AppState> {
 				<input id='search' type="search" placeholder="Search..." onChange={(e) => this.onSearch(e.target.value)} />
 			</header>
 			{tickets ? <div className='results'>Showing {tickets.length} results</div> : null}
-			<Container triggerText="Create new ticket" onSubmit={this.handleAddTicket} />
+			<Container triggerText="Create new ticket" onSubmit={this.handleAddTicket}/>
 			{tickets ? this.renderTickets(tickets) : <h2>Loading..</h2>}
 			<footer>
 				<Pagination id='Pagination' onChange={this.handlePageChange.bind(this)} page={this.state.currentPage} count={this.state.pages} defaultPage={1} boundaryCount={2} />
@@ -130,10 +124,10 @@ export class App extends React.PureComponent<{}, AppState> {
 		</main>)
 	}
 
-	handleAddTicket = (event: any) => {
+	handleAddTicket = (event: any) => {	
 		event.preventDefault(event);
 		const currentTime = new Date().getTime();
-		const labels: string[] = (event.target.labels.value).split(',');
+		const labels: string[] = event.target.labels.value === '' ? [] : (event.target.labels.value).split(',');
 		const title = event.target.title.value;
 		const content = event.target.content.value;
 		const email = event.target.email.value;
@@ -145,20 +139,16 @@ export class App extends React.PureComponent<{}, AppState> {
 				id: this.generateID(), title: title, content: content,
 				userEmail: email, creationTime: currentTime, labels: labels
 			};
-			console.log(ticket);
 			this.addNewTicketAPICall(ticket);
-			const form = document.getElementById('addTicketForm');
-			//@ts-ignore
-			form.reset();
 		}
 	};
+
 	async addNewTicketAPICall(ticket: Ticket) {
 		const response = await api.addTicket(ticket, this.state.currentPage);
 		this.setState({
 			tickets: response.tickets,
 			pages: response.numOfPages
 		})
-		this.forceUpdate();
 	}
 
 	generateID() {

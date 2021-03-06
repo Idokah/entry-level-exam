@@ -1,24 +1,29 @@
 import React, { Component } from 'react';
 import { Modal } from './Modal';
 import TriggerButton from './TriggerButton';
+
 export class Container extends Component {
   state = { isShown: false };
+
   showModal = () => {
     this.setState({ isShown: true }, () => {
       this.closeButton.focus();
     });
     this.toggleScrollLock();
   };
+
   closeModal = () => {
     this.setState({ isShown: false });
     this.TriggerButton.focus();
     this.toggleScrollLock();
   };
+
   onKeyDown = (event) => {
     if (event.keyCode === 27) {
       this.closeModal();
     }
   };
+
   onClickOutside = (event) => {
     if (this.modal && this.modal.contains(event.target)) return;
     this.closeModal();
@@ -27,6 +32,12 @@ export class Container extends Component {
   toggleScrollLock = () => {
     document.querySelector('html').classList.toggle('scroll-lock');
   };
+
+  handleSaved = (event) => {
+    this.props.onSubmit(event);
+    this.closeModal();
+  }
+
   render() {
     return (
       <React.Fragment>
@@ -37,7 +48,7 @@ export class Container extends Component {
         />
         {this.state.isShown ? (
           <Modal
-            onSubmit={this.props.onSubmit}
+            onSubmit={this.handleSaved.bind(this)}
             modalRef={(n) => (this.modal = n)}
             buttonRef={(n) => (this.closeButton = n)}
             closeModal={this.closeModal}
