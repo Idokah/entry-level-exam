@@ -1,6 +1,6 @@
 import express from 'express';
 import bodyParser = require('body-parser');
-import { dataPath } from './temp-data';
+import { dataPath,tempData } from './temp-data';
 import { serverAPIPort, APIPath } from '@fed-exam/config';
 import { Ticket } from '../client/src/api';
 import { writeFile, readFileSync } from 'fs';
@@ -39,9 +39,9 @@ app.get(APIPath, async (req, res) => {
     userEmail=search.slice(search.indexOf(":") + 1, search.indexOf(" "));
     search = search.split(" ")[1];
   }
-  const data = require('../db/data.json') as Ticket[];
+  //const data = require('../db/data.json') as Ticket[];
 
-  filteredTickets = data.filter((t) => (t.title.toLowerCase() + t.content.toLowerCase()).includes(search.toLowerCase()));
+  filteredTickets = tempData.filter((t) => (t.title.toLowerCase() + t.content.toLowerCase()).includes(search.toLowerCase()));
   switch (mode) {
     case 'after':
       filteredTickets = filteredTickets.filter((t) => (date <= t.creationTime));
@@ -65,16 +65,16 @@ app.get(APIPath, async (req, res) => {
 
 app.post(`${APIPath}/addTicket`,(req,res)=>{
   const ticket:Ticket = req.body.params.ticket
-  const data = require('../db/data.json') as Ticket[];
-  data.unshift(ticket)
-  updateJson(data);
+  //const data = require('../db/data.json') as Ticket[];
+  tempData.unshift(ticket)
+  updateJson(tempData);
   // @ts-ignore
   const page: number = req.body.page || 1;
-  const paginatedData = data.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-  const numOfPages = Math.ceil(data.length / PAGE_SIZE);
+  const paginatedData = tempData.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const numOfPages = Math.ceil(tempData.length / PAGE_SIZE);
   res.send({
     tickets: paginatedData,
-    numOfPages: data.length
+    numOfPages: tempData.length
   });
 })
 
