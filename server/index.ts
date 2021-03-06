@@ -1,9 +1,9 @@
 import express from 'express';
 import bodyParser = require('body-parser');
-import { tempData } from './temp-data';
+import { dataPath } from './temp-data';
 import { serverAPIPort, APIPath } from '@fed-exam/config';
 import { Ticket } from '../client/src/api';
-import { writeFile } from 'fs';
+import { writeFile, readFileSync } from 'fs';
 
 console.log('starting server', { serverAPIPort, APIPath });
 
@@ -20,7 +20,7 @@ app.use((_, res, next) => {
   next();
 });
 
-app.get(APIPath, (req, res) => {
+app.get(APIPath, async (req, res) => {
   // @ts-ignore
   const page: number = req.query.page || 1;
   let search: string = req.query.search as string || "";
@@ -39,8 +39,9 @@ app.get(APIPath, (req, res) => {
     userEmail=search.slice(search.indexOf(":") + 1, search.indexOf(" "));
     search = search.split(" ")[1];
   }
+  const data = require('../db/data.json') as Ticket[];
 
-  filteredTickets = tempData.filter((t) => (t.title.toLowerCase() + t.content.toLowerCase()).includes(search.toLowerCase()));
+  filteredTickets = data.filter((t) => (t.title.toLowerCase() + t.content.toLowerCase()).includes(search.toLowerCase()));
   switch (mode) {
     case 'after':
       filteredTickets = filteredTickets.filter((t) => (date <= t.creationTime));
@@ -53,7 +54,6 @@ app.get(APIPath, (req, res) => {
       break;
   }
 
-
   const paginatedData = filteredTickets.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const numOfPages = Math.ceil(filteredTickets.length / PAGE_SIZE);
@@ -65,22 +65,24 @@ app.get(APIPath, (req, res) => {
 
 app.post(`${APIPath}/addTicket`,(req,res)=>{
   const ticket:Ticket = req.body.params.ticket
-  tempData.unshift(ticket)
-  updateJson();
+  const data = require('../db/data.json') as Ticket[];
+  data.unshift(ticket)
+  updateJson(data);
   // @ts-ignore
   const page: number = req.body.page || 1;
-  const paginatedData = tempData.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-  const numOfPages = Math.ceil(tempData.length / PAGE_SIZE);
+  const paginatedData = data.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const numOfPages = Math.ceil(data.length / PAGE_SIZE);
   res.send({
     tickets: paginatedData,
-    numOfPages: tempData.length
+    numOfPages: data.length
   });
 })
 
-function updateJson()
+function updateJson(updatedData: Ticket[])
 {
-  const dataAsString:string=JSON.stringify(tempData,null,2);
-  writeFile('./data.json',dataAsString,(err:any)=>{
+  const dataAsString:string = JSON.stringify(updatedData,null,2);
+
+  writeFile(dataPath,dataAsString,(err:any)=>{
     if (err) console.log(err); 
   })
 }

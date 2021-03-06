@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Modal } from './Modal';
+import CreateTicketFormModal from './CreateTicketModal';
 import TriggerButton from './TriggerButton';
 
-export class Container extends Component {
+export class CreateTicketContainer extends Component {
   state = { isShown: false };
 
   showModal = () => {
@@ -47,7 +47,7 @@ export class Container extends Component {
           triggerText={this.props.triggerText}
         />
         {this.state.isShown ? (
-          <Modal
+          <CreateTicketFormModal
             onSubmit={this.handleSaved.bind(this)}
             modalRef={(n) => (this.modal = n)}
             buttonRef={(n) => (this.closeButton = n)}
@@ -61,4 +61,4 @@ export class Container extends Component {
   }
 }
 
-export default Container;
+export default CreateTicketContainer;
