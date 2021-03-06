@@ -2,9 +2,8 @@ import express from 'express';
 import bodyParser = require('body-parser');
 import { tempData } from './temp-data';
 import { serverAPIPort, APIPath } from '@fed-exam/config';
-import { url } from 'inspector';
 import { Ticket } from '../client/src/api';
-import { fstat, writeFile } from 'fs';
+import { writeFile } from 'fs';
 
 console.log('starting server', { serverAPIPort, APIPath });
 
@@ -29,7 +28,6 @@ app.get(APIPath, (req, res) => {
   let filteredTickets: Ticket[] = [];
   let date: number=0;
   let userEmail:string='';
-  //create another api
   if (search.startsWith("after:") || search.startsWith("before:")) {
     mode = search.startsWith("after:") ? 'after' : 'before';
     const tempDate = search.slice(search.indexOf(":") + 1, search.indexOf(" "));
@@ -65,7 +63,7 @@ app.get(APIPath, (req, res) => {
   });
 });
 
-app.post(APIPath+'/addTicket',(req,res)=>{
+app.post(`${APIPath}/addTicket`,(req,res)=>{
   const ticket:Ticket = req.body.params.ticket
   tempData.unshift(ticket)
   updateJson();
@@ -82,12 +80,9 @@ app.post(APIPath+'/addTicket',(req,res)=>{
 function updateJson()
 {
   const dataAsString:string=JSON.stringify(tempData,null,2);
-  console.log('---dataAsString', dataAsString);
-  
   writeFile('./data.json',dataAsString,(err:any)=>{
     if (err) console.log(err); 
   })
-  // updateTempData();
 }
 
 app.listen(serverAPIPort);
