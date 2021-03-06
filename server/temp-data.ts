@@ -1,5 +1,6 @@
 import {Ticket} from '../client/src/api';
 
-const data = require('./data.json');
+export const  dataPath = '../db/data.json';
+const data = require(dataPath);
 
 export const tempData = data as Ticket[];

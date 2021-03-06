@@ -17,6 +17,7 @@ export type GetTicketsResponse = {
 
 export type ApiClient = {
     getTickets: (search: string, page: number) => Promise<GetTicketsResponse>;
+    addTicket: (ticket:Ticket, page:number) => Promise<GetTicketsResponse>;
 }
 
 export const createApiClient = (): ApiClient => {
@@ -29,6 +30,14 @@ export const createApiClient = (): ApiClient => {
                         page: page,
                     }
                 }).then((res) => res.data);
-        }
+        },
+        addTicket: (ticket,page) =>{
+            return axios.post(APIRootPath+'/addTicket',
+            {
+                params:{
+                    ticket:ticket
+                }
+            }).then((res) => res.data);
+        },
     }
 }

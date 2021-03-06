@@ -98,7 +98,13 @@ body {
 				color:var(--content-color);
 				height:auto;
 			}
+
+			.header{
+				display: grid;
+				grid-template-columns: auto auto;
+			}
 			.pinned{
+				margin: 15px 0;
 				text-align: right; ;
 			}
 			footer {
@@ -113,8 +119,12 @@ body {
 					flex-shrink: 0;
 				}
 				.tag{
-					background-color: #33ccff;
-					border-radius: 13px;
+					background-color: #c8f1ff;
+					border-radius: 4px;
+					font: small-caption;
+					align-self: center;
+					margin-left: 6px;
+					border: 1px solid #a0cffd;
 				}
 			}
 		}
