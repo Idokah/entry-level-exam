@@ -29,9 +29,6 @@ export class App extends React.PureComponent<{}, AppState> {
 
 	async componentDidMount() {
 		await this.getTickets(this.state.search, this.state.currentPage);
-		// this.setState({
-		// 	tickets : await api.getTickets(this.state.search,this.state.currentPage)
-		// });
 	}
 
 	handlePinItem(ticket: Ticket) {
@@ -74,7 +71,7 @@ export class App extends React.PureComponent<{}, AppState> {
 					</ShowMoreText>
 					<footer>
 						<div className='meta-data'>By {ticket.userEmail} | {new Date(ticket.creationTime).toLocaleString()}</div>
-						<label className='tag'>{}</label>
+						<label className='tag'>{ticket.labels}</label>
 					</footer>
 				</li>))}
 			</ul>);
